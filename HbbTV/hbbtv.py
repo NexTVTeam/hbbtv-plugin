@@ -12,6 +12,20 @@ class HbbTVWindow(Screen):
 		</screen>
 		"""
 	def __init__(self, session, url=None, app_info=None):
+		from enigma import getDesktop
+		self.width = getDesktop(0).size().width()
+		self.height = getDesktop(0).size().height()
+		
+		if (self.width > 1920):
+			self.width = 1920
+		elif (self.width < 720):
+			self.width = 720
+			
+		if (self.height > 1080):
+			self.height = 1080
+		elif (self.height < 576):
+			self.height = 576
+		
 		vbcfg.g_position = vbcfg.getPosition()
 		vbcfg.osd_lock()
 
@@ -57,12 +71,12 @@ class HbbTVWindow(Screen):
 		vbcfg.DEBUG("info: %s" % self._info and self._info)
 
 		if self._info and self._info["control"] == 1 and vbcfg.g_channel_info is not None:
-			os.system("run.sh restart %s" % (self._info["url"]))
+			os.system("run.sh restart %d %d %s" % (self.width, self.height, self._info["url"]))
 		else:
 			if self._url is not None:
-				os.system("run.sh restart %s" % (self._url))
+				os.system("run.sh restart %d %d %s" % (self.width, self.height, self._url))
 			else:
-				os.system("run.sh restart %s" % (self._info["url"]))
+				os.system("run.sh restart %d %d %s" % (self.width, self.height, self._info["url"]))
 				
 		vbcfg.g_main._timer_update_video_size.start(100)
 
